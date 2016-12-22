@@ -19,12 +19,12 @@ import sys, select
  
 # Read a line. Using select for non blocking reading of sys.stdin
 def getLine():
-    i,o,e = select.select([sys.stdin],[],[],0.0001)
-    for s in i:
-        if s == sys.stdin:
-            input = sys.stdin.readline()
-            return input
-    return False
+	i,o,e = select.select([sys.stdin],[],[],0.0001)
+	for s in i:
+		if s == sys.stdin:
+			input = sys.stdin.readline()
+			return input
+	return False
  
 host = raw_input("Please Enter IP: ")
 port = int(raw_input("Please Enter PORT: "), 16) # Base 16 for hex value
@@ -38,13 +38,13 @@ s.bind(('', port)) #Accept Connections on port
 print "Accepting connections on port", hex(port)
  
 while 1:
-    try:
-        message, address = s.recvfrom(8192) # Buffer size is 8192. Change as needed.
-        if message:
-            print address, "> ", message
-    except:
-        pass
+	try:
+		message, address = s.recvfrom(8192) # Buffer size is 8192. Change as needed.
+		if message:
+			print address, "> ", message
+	except:
+		pass
  
-    input = getLine();
-    if(input != False):
-        s.sendto(input, send_address)
+	input = getLine();
+	if(input != False):
+		s.sendto(input, send_address)
