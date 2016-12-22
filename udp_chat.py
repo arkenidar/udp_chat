@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 
 '''
@@ -26,25 +26,30 @@ def getLine():
 			return input
 	return False
  
-host = raw_input("Please Enter IP: ")
-port = int(raw_input("Please Enter PORT: "), 16) # Base 16 for hex value
+ohost = input("Please Enter OUT-HOST-IP: ")
+if not ohost: ohost = '127.0.0.1'
+iport = int(input("Please Enter IN-PORT: "))
+oport = int(input("Please Enter OUT-PORT: "))
+
  
-send_address = (host, port) # Set the address to send to
+send_address = (ohost, oport) # Set the address to send to
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)    # Create Datagram Socket (UDP)
 s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) # Make Socket Reusable
 s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1) # Allow incoming broadcasts
 s.setblocking(False) # Set socket to non-blocking mode
-s.bind(('', port)) #Accept Connections on port
-print "Accepting connections on port", hex(port)
+s.bind(('', iport)) #Accept Connections on port
+print("Accepting connections on port", iport)
  
 while 1:
 	try:
 		message, address = s.recvfrom(8192) # Buffer size is 8192. Change as needed.
 		if message:
-			print address, "> ", message
-	except:
+			print(address, "> ", message.decode())
+	except BlockingIOError:
 		pass
  
-	input = getLine();
+	input = getLine()
 	if(input != False):
-		s.sendto(input, send_address)
+		data_to_send=input.rstrip('\n').encode()
+		print('sending',data_to_send,'to', send_address)
+		s.sendto(data_to_send, send_address)
