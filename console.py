@@ -24,6 +24,18 @@ if mswindows:
 				else:
 					ret=copy.copy(out)
 					out=""
+					print()
 					return ret
 			else:
 				return None
+
+def testGetLine():
+	while True:
+		line = getLine()
+		if line != None:
+			print('line', line)
+		else:
+			pass
+
+if __name__=='__main__':
+	testGetLine()

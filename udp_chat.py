@@ -53,7 +53,8 @@ try:
 	import msvcrt
 	mswindows=True
 
-	from console import getLine
+	import console
+	getLine=console.getLine
 
 except ImportError:
 	pass
