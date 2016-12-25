@@ -46,6 +46,28 @@ def writef(text):
 	sys.stdout.write(text)
 	sys.stdout.flush()
 
+# microsoft windows specific code
+mswindows=False
+try:
+	import msvcrt
+
+	mswindows=True
+
+	def getLine():
+		out=[]
+		while True:
+			if msvcrt.kbhit():
+				got=chr(msvcrt.getch())
+				if got!='\n':
+					out.append(got)
+				else:
+					return ''.join(out)
+			else:
+				return None
+
+except ImportError:
+	pass
+
 '''
 from: https://thecodeninja.net/2014/12/udp-chat-in-python/
 
@@ -59,6 +81,8 @@ For Broadcasting mode set the last byte of IP address to 255. i.e. 192.168.0.255
 '''
 
 import socket
+
+if mswindows: print('mswindows')
 
 ohost = bInput("Please Enter OUT-HOST-IP: ")
 if not ohost: ohost = '127.0.0.1'
