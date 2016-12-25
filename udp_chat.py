@@ -46,27 +46,26 @@ def writef(text):
 	sys.stdout.write(text)
 	sys.stdout.flush()
 
+
 # microsoft windows specific code
 mswindows=False
 try:
 	import msvcrt
-
 	mswindows=True
 
-	def getLine():
-		out=[]
-		while True:
-			if msvcrt.kbhit():
-				got=chr(msvcrt.getch())
-				if got!='\n':
-					out.append(got)
-				else:
-					return ''.join(out)
-			else:
-				return None
+	from console import getLine
 
 except ImportError:
 	pass
+
+def testGetLine():
+	while True:
+		line = getLine()
+		if line != None:
+			print('line', line)
+		else:
+			pass
+#testGetLine()
 
 '''
 from: https://thecodeninja.net/2014/12/udp-chat-in-python/
