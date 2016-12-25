@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # microsoft windows specific code
 mswindows=False
 try:
@@ -10,32 +12,33 @@ if mswindows:
 	import copy
 	import sys
 
-	out=""
-	def getLine():
-		global out
-		while True:
-			if msvcrt.kbhit():
-				got=msvcrt.getch()
-				got=got.decode()
-				if got!='\r':
-					print(got, end="", sep="")
-					sys.stdout.flush()
-					out+=got
+	class Console:
+		def __init__(self):
+			self.out=""
+		def getLine(self):
+			while True:
+				if msvcrt.kbhit():
+					got=msvcrt.getch()
+					got=got.decode()
+					if got!='\r':
+						print(got, end="", sep="")
+						sys.stdout.flush()
+						self.out+=got
+					else:
+						ret=copy.copy(self.out)
+						self.out=""
+						print()
+						return ret
 				else:
-					ret=copy.copy(out)
-					out=""
-					print()
-					return ret
-			else:
-				return None
+					return None
 
 def testGetLine():
+	console=Console()
 	while True:
-		line = getLine()
+		line = console.getLine()
 		if line != None:
 			print('line', line)
 		else:
 			pass
-
 if __name__=='__main__':
 	testGetLine()

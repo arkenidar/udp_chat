@@ -4,30 +4,45 @@
 http://stackoverflow.com/questions/2408560/python-nonblocking-console-input
 '''
 
-import sys
-import threading
-import queue
+# microsoft windows specific code (OS check)
+mswindows=False
+try:
+	import msvcrt
+	mswindows=True
+except ImportError:
+	pass
 
-def add_input(input_queue):
-	while True:
-		input_queue.put(sys.stdin.read(1))
+if not mswindows:
+	import sys
+	import threading
+	import queue
 
-input_queue = queue.Queue()
-input_thread = threading.Thread(target=add_input, args=(input_queue,))
-input_thread.daemon = True
-input_thread.start()
+	def add_input(input_queue):
+		while True:
+			input_queue.put(sys.stdin.read(1))
 
-def getLine():
-	out=[]
-	while True:
-		if not input_queue.empty():
-			got=input_queue.get()
-			if got!='\n':
-				out.append(got)
+	input_queue = queue.Queue()
+	input_thread = threading.Thread(target=add_input, args=(input_queue,))
+	input_thread.daemon = True
+	input_thread.start()
+
+	def getLine():
+		out=[]
+		while True:
+			if not input_queue.empty():
+				got=input_queue.get()
+				if got!='\n':
+					out.append(got)
+				else:
+					return ''.join(out)
 			else:
-				return ''.join(out)
-		else:
-			return None
+				return None
+
+if mswindows:
+	import console
+	consoleo=console.Console()
+	def getLine():
+		return consoleo.getLine()
 
 def testGetLine():
 	while True:
@@ -46,28 +61,6 @@ def writef(text):
 	sys.stdout.write(text)
 	sys.stdout.flush()
 
-
-# microsoft windows specific code
-mswindows=False
-try:
-	import msvcrt
-	mswindows=True
-
-	import console
-	getLine=console.getLine
-
-except ImportError:
-	pass
-
-def testGetLine():
-	while True:
-		line = getLine()
-		if line != None:
-			print('line', line)
-		else:
-			pass
-#testGetLine()
-
 '''
 from: https://thecodeninja.net/2014/12/udp-chat-in-python/
 
@@ -81,6 +74,7 @@ For Broadcasting mode set the last byte of IP address to 255. i.e. 192.168.0.255
 '''
 
 import socket
+import sys
 
 if mswindows: print('mswindows')
 
