@@ -93,18 +93,31 @@ print("Accepting connections on port", iport)
 
 import time
 
+'''
+- messagesCanBeAsked=True
+- askMessageToUser() status=ask
+- messagesCanBeAsked=False
+- sendMessageAndWaitForReception() status=sendMessage
+- messageReceptionConfirmed=False
+- receiveMessage() status=receiveMessage
+- confirmMessageReception() status=sendConfirmation
+- status=receiveConfirmation
+- messageReceptionConfirmed=True
+- messagesCanBeAsked=True
+'''
+
 while True:
+	imsg=''
 	try:
-		message, address = s.recvfrom(8192) # Buffer size is 8192. Change as needed.
-		if message:
-			print(address, "> ", message.decode())
+		data, address = s.recvfrom(8192)
+		if data:
+			imsg=data.decode()
+			#writef(msg+' from address: '+address+'\n')
 	except BlockingIOError:
 		pass
- 
-	line = getLine()
-	if(line != None):
-		data_to_send=line.rstrip('\n')
-		print(send_address,'<',data_to_send)
-		s.sendto(data_to_send.encode(), send_address)
-	else:
-		time.sleep(1)
+
+	got = getLine()
+	if got!=None:
+		omsg=got.rstrip('\n')
+
+	s.sendto(omsg.encode(), send_address)
