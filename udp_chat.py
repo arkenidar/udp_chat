@@ -106,18 +106,45 @@ import time
 - messagesCanBeAsked=True
 '''
 
+import sys
+import select
+import tty
+import termios
+
+def isData():
+    return select.select([sys.stdin], [], [], 0) == ([sys.stdin], [], [])
+
+imsg=''
+omsg=''
 while True:
-	imsg=''
+	print(('imsg (loop begin)', imsg))
+	print(('omsg (loop begin)', omsg))
+
 	try:
 		data, address = s.recvfrom(8192)
 		if data:
 			imsg=data.decode()
-			#writef(msg+' from address: '+address+'\n')
+			print(('imsg (receive)', imsg))
 	except BlockingIOError:
 		pass
 
-	got = getLine()
-	if got!=None:
-		omsg=got.rstrip('\n')
+	if imsg=='#received':
+		print(('imsg (#received)', imsg))
+		omsg=''
+		print(('omsg (imsg: #received)', omsg))
+	elif imsg!='':
+		print(('imsg (some imsg)', imsg))
+		omsg='#received'
+		print(('omsg (some imsg)', omsg))	
 
-	s.sendto(omsg.encode(), send_address)
+	if omsg=='':
+		consoleData = isData()
+		if consoleData:
+			omsg=input('data?').rstrip('\n')
+			print(('omsg (getLine)', omsg))
+
+	if omsg!='':
+		print(('omsg (before send)', omsg))
+		s.sendto(omsg.encode(), send_address)
+		#omsg=''
+		print(('omsg (after send)', omsg))
